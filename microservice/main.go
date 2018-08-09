@@ -33,7 +33,7 @@ func startServer() {
 	router := gin.Default()
 	v1 := router.Group("/api/v1/users")
 	{
-		v1.GET("/", api.GetUsers())
+		v1.GET("/", api.GetUsers)
 		// v1.POST("/", createTodo)
 		// v1.GET("/:id", fetchSingleTodo)
 		// v1.PUT("/:id", updateTodo)

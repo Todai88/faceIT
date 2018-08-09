@@ -16,9 +16,10 @@ type User struct {
 	Country   string `json:"country"`
 }
 
+// Use map for scalability
 var users = map[string]User{
-	"1": User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
-	"2": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
+	"1337":   User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
+	"h4xx0r": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
 func (u User) ToJSON() []byte {
@@ -29,15 +30,26 @@ func (u User) ToJSON() []byte {
 	return ToJSON
 }
 
-func FromJSON(data []byte) User {
-	user := User{}
-	err := json.Unmarshal(data, &user)
-	if err != nil {
-		panic(err)
-	}
-	return user
+func GetUsers(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
 
-func GetUsers(c *gin.Context) {
+func GetUser(c *gin.Context) {
+	if user, ok := users[c.Param("nickname")]; ok {
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": User{}})
+	}
+}
+
+func CreateUser(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
+}
+
+func UpdateUser(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
+}
+
+func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
