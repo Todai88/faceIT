@@ -31,13 +31,13 @@ func setupLogging() {
 func startServer() {
 	// TODO: start server, subscribe to endpoints.
 	router := gin.Default()
-	v1 := router.Group("/api/v1/users")
+	v1 := router.Group("/api/v1/")
 	{
-		v1.GET("/", api.GetUsers)
-		// v1.POST("/", createTodo)
-		// v1.GET("/:id", fetchSingleTodo)
-		// v1.PUT("/:id", updateTodo)
-		// v1.DELETE("/:id", deleteTodo)
+		v1.GET("/users/:nickname", api.GetUser)
+		v1.GET("/users/", api.GetUsers)
+		v1.POST("/users/", api.CreateUser)
+		v1.PUT("/users/:nickname", api.UpdateUser)
+		v1.DELETE("/users/:nickname", api.DeleteUser)
 	}
 
 	router.Run(":5050")

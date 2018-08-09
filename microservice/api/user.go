@@ -38,7 +38,7 @@ func GetUser(c *gin.Context) {
 	if user, ok := users[c.Param("nickname")]; ok {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": User{}})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": json.Marshal()})
 	}
 }
 
@@ -47,6 +47,7 @@ func CreateUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
+	if 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
 
