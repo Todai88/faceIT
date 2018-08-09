@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	api "github.com/Todai88/faceIt/microservice/api"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,9 +31,14 @@ func setupLogging() {
 func startServer() {
 	// TODO: start server, subscribe to endpoints.
 	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(200, "pong")
-	})
+	v1 := router.Group("/api/v1/users")
+	{
+		v1.GET("/", api.GetUsers())
+		// v1.POST("/", createTodo)
+		// v1.GET("/:id", fetchSingleTodo)
+		// v1.PUT("/:id", updateTodo)
+		// v1.DELETE("/:id", deleteTodo)
+	}
 
 	router.Run(":5050")
 }
