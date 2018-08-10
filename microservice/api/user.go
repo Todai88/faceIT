@@ -16,10 +16,9 @@ type User struct {
 	Country   string `json:"country"`
 }
 
-// Use map for scalability
-var users = map[string]User{
-	"1": User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
-	"2": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
+var users = []User{
+	User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
+	User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
 func (u User) ToJSON() []byte {
@@ -30,13 +29,38 @@ func (u User) ToJSON() []byte {
 	return ToJSON
 }
 
-func filterUsers(parameters map[string][]string) map[string]User {
-	var tmpUsers = map[string]User{}
-	for key, value := range users {
+//TODO: Add fan out -> fan in.
+func filterUsers(parameters map[string][]string) []User {
+	var tmpUsers = []User{}
+	for index := range users {
+		fullFillsAllFilters := true
 		if nickname, ok := parameters["nickname"]; ok {
-			if value.NickName == nickname[0] {
-				tmpUsers[key] = value
+			if users[index].NickName != nickname[0] {
+				fullFillsAllFilters = false
 			}
+		}
+		if country, ok := parameters["country"]; ok {
+			if users[index].Country == country[0] {
+				fullFillsAllFilters = false
+			}
+		}
+		if firstname, ok := parameters["firstname"]; ok {
+			if users[index].FirstName == firstname[0] {
+				fullFillsAllFilters = false
+			}
+		}
+		if lastname, ok := parameters["lastname"]; ok {
+			if users[index].LastName == lastname[0] {
+				fullFillsAllFilters = false
+			}
+		}
+		if email, ok := parameters["email"]; ok {
+			if users[index].Email == email[0] {
+				fullFillsAllFilters = false
+			}
+		}
+		if fullFillsAllFilters {
+			tmpUsers = append(tmpUsers, users[index])
 		}
 	}
 	return tmpUsers
@@ -48,14 +72,6 @@ func GetUsers(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": filterUsers(queryParams)})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
-	}
-}
-
-func GetUser(c *gin.Context) {
-	if user, ok := users[c.Param("id")]; ok {
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
-	} else {
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": make([]User, 0)})
 	}
 }
 
