@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,11 +30,21 @@ func (u User) ToJSON() []byte {
 	return ToJSON
 }
 
+func filterUsers(parameters map[string][]string) map[string]User {
+	var tmpUsers = map[string]User{}
+	for key, value := range users {
+		if nickname, ok := parameters["nickname"]; ok {
+			if value.NickName == nickname[0] {
+				tmpUsers[key] = value
+			}
+		}
+	}
+	return tmpUsers
+}
+
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
-	fmt.Println(queryParams)
-	if nickname, ok := queryParams["nickname"]; ok {
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users[nickname[0]]})
+	if len(queryParams) >= 0 {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 	}
