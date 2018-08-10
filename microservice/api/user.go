@@ -9,18 +9,18 @@ import (
 )
 
 type User struct {
-	firstName string `json:"firstname"`
-	lastName  string `json:"lastname"`
-	nickName  string `json:"nickname"`
-	email     string `json:"email"`
-	password  string `json:"password"`
-	country   string `json:"country"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	NickName  string `json:"nickname"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Country   string `json:"country"`
 }
 
 // Use map for scalability
 var users = map[string]User{
-	"1": User{firstName: "Jane", lastName: "Doe", nickName: "1337", email: "1337@hltv.org", password: "FnaticFanGrrl91", country: "USA"},
-	"2": User{firstName: "John", lastName: "Doe", nickName: "h4xx0r", email: "h4xx0r@SKgaming.com", password: "ILoveGrubby4eva!", country: "Netherlands"},
+	"1": User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
+	"2": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
 func (u User) ToJSON() []byte {
