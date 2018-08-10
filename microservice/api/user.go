@@ -34,7 +34,7 @@ func (u User) ToJSON() []byte {
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	fmt.Println(queryParams)
-	if nickname, ok := queryParams[queryParams.Get("nickname")]; ok {
+	if nickname, ok := queryParams["nickname"]; ok {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users[nickname[0]]})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
