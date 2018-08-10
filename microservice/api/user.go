@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +19,8 @@ type User struct {
 
 // Use map for scalability
 var users = map[string]User{
-	"1337":   User{firstName: "Jane", lastName: "Doe", nickName: "1337", email: "1337@hltv.org", password: "FnaticFanGrrl91", country: "USA"},
-	"h4xx0r": User{firstName: "John", lastName: "Doe", nickName: "h4xx0r", email: "h4xx0r@SKgaming.com", password: "ILoveGrubby4eva!", country: "Netherlands"},
+	"1": User{firstName: "Jane", lastName: "Doe", nickName: "1337", email: "1337@hltv.org", password: "FnaticFanGrrl91", country: "USA"},
+	"2": User{firstName: "John", lastName: "Doe", nickName: "h4xx0r", email: "h4xx0r@SKgaming.com", password: "ILoveGrubby4eva!", country: "Netherlands"},
 }
 
 func (u User) ToJSON() []byte {
@@ -32,6 +33,7 @@ func (u User) ToJSON() []byte {
 
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
+	fmt.Println(queryParams)
 	if nickname, ok := queryParams[queryParams.Get("nickname")]; ok {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users[nickname[0]]})
 	} else {
@@ -40,7 +42,7 @@ func GetUsers(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	if user, ok := users[c.Param("nickname")]; ok {
+	if user, ok := users[c.Param("id")]; ok {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": make([]User, 0)})

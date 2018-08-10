@@ -33,11 +33,11 @@ func startServer() {
 	router := gin.Default()
 	v1 := router.Group("/api/v1/")
 	{
-		v1.GET("/users/:nickname", api.GetUser)
 		v1.GET("/users/", api.GetUsers)
 		v1.POST("/users/", api.CreateUser)
 		v1.PUT("/users/:nickname", api.UpdateUser)
 		v1.DELETE("/users/:nickname", api.DeleteUser)
+		v1.GET("/users/:id", api.GetUser)
 	}
 
 	router.Run(":5050")
