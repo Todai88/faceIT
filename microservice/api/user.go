@@ -33,29 +33,41 @@ func (u User) ToJSON() []byte {
 func filterUsers(parameters map[string][]string) []User {
 	var tmpUsers = []User{}
 	for index := range users {
+		/*
+			Check if parameter exists in the query string.
+			If it does, check if the parameter's value matches the current user's corresponding value.
+			If it does, append it to our temporary list.
+		*/
 		fullFillsAllFilters := true
+
+		/*
+			context.Request.URL.Query() returns a map of a list of string.
+			In this case we are really only interested in the first item in that list of strings.
+			If a user sends two or more country parameters, it can be considered to be an incorrect
+			usage of the API, in which case we discard any superflous values.
+		*/
 		if nickname, ok := parameters["nickname"]; ok {
 			if users[index].NickName != nickname[0] {
 				fullFillsAllFilters = false
 			}
 		}
 		if country, ok := parameters["country"]; ok {
-			if users[index].Country == country[0] {
+			if users[index].Country != country[0] {
 				fullFillsAllFilters = false
 			}
 		}
 		if firstname, ok := parameters["firstname"]; ok {
-			if users[index].FirstName == firstname[0] {
+			if users[index].FirstName != firstname[0] {
 				fullFillsAllFilters = false
 			}
 		}
 		if lastname, ok := parameters["lastname"]; ok {
-			if users[index].LastName == lastname[0] {
+			if users[index].LastName != lastname[0] {
 				fullFillsAllFilters = false
 			}
 		}
 		if email, ok := parameters["email"]; ok {
-			if users[index].Email == email[0] {
+			if users[index].Email != email[0] {
 				fullFillsAllFilters = false
 			}
 		}
