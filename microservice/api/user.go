@@ -45,6 +45,7 @@ func filterUsers(parameters map[string][]string) map[string]User {
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	if len(queryParams) >= 0 {
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": filterUsers(queryParams)})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 	}
