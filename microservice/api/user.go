@@ -119,7 +119,7 @@ func GetUsers(c *gin.Context) {
 */
 func CreateUser(c *gin.Context) {
 	var user User
-	if err := c.BindJSON(&user); err != nil {
+	if err := c.BindJSON(&user); err == nil {
 		if _, ok := users[user.NickName]; !ok {
 			users[user.NickName] = user
 			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
