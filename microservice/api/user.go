@@ -27,6 +27,28 @@ var users = map[string]User{
 	"h4xx0r": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
+func (u *User) validate() bool {
+	if u.FirstName == "" {
+		return false
+	}
+	if u.LastName == "" {
+		return false
+	}
+	if u.NickName == "" {
+		return false
+	}
+	if u.Email == "" {
+		return false
+	}
+	if u.Password == "" {
+		return false
+	}
+	if u.Country == "" {
+		return false
+	}
+	return true
+}
+
 func getSlicedUsers() []User {
 	var slicedUsers = make([]User, len(users))
 	for index := range users {
@@ -120,14 +142,18 @@ func GetUsers(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user User
 	if err := c.BindJSON(&user); err == nil {
-		if _, ok := users[user.NickName]; !ok {
-			users[user.NickName] = user
-			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
-		} else if ok {
-			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists"})
+		if user.validate() {
+			if _, ok := users[user.NickName]; !ok {
+				users[user.NickName] = user
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
+			} else if ok {
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists"})
+			}
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
 		}
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Unable to validate your data"})
 	}
 }
 
