@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,22 +15,27 @@ type User struct {
 	Country   string `json:"country"`
 }
 
-var users = []User{
-	User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
-	User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
+/*
+	A slice is used as persistent "storage" as it's quicker to iterate through (marginally on bigger datasets).
+	Further, a map was used for quicker lookup capabilities, with the nickname as a key. Reason being that nicknames are unique on the FaceIT platform.
+	Realistically speaking a database would be used for all of these capabilities and our main focus would be to get parameters,
+	send them to the DB and return the results.
+*/
+var users = map[string]User{
+	"1337":   User{FirstName: "Jane", LastName: "Doe", NickName: "1337", Email: "1337@hltv.org", Password: "FnaticFanGrrl91", Country: "USA"},
+	"h4xx0r": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
-func (u User) ToJSON() []byte {
-	ToJSON, err := json.Marshal(u)
-	if err != nil {
-		panic(err)
+func getSlicedUsers() []User {
+	var slicedUsers = make([]User, len(users))
+	for index := range users {
+		slicedUsers = append(slicedUsers, users[index])
 	}
-	return ToJSON
+	return slicedUsers
 }
 
-//TODO: Add fan out -> fan in.
 func filterUsers(parameters map[string][]string) []User {
-	var tmpUsers = []User{}
+	var slicedUsers = []User{}
 	for index := range users {
 		/*
 			Check if parameter exists in the query string.
@@ -72,29 +76,50 @@ func filterUsers(parameters map[string][]string) []User {
 			}
 		}
 		if fullFillsAllFilters {
-			tmpUsers = append(tmpUsers, users[index])
+			slicedUsers = append(slicedUsers, users[index])
 		}
 	}
-	return tmpUsers
+	return slicedUsers
 }
 
+/*
+	GetUsers
+	Returns: Slice of users of length >= 0.
+	Logic: If there are query parameters, a filter is added.
+	Considerations: Would be good to chunk out the slice of users to
+					somehow concurrently run over the chunks, increasing performance.
+*/
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	if len(queryParams) >= 0 {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": filterUsers(queryParams)})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
 	}
 }
 
+/*
+	CreateUser
+	Returns: The created user, or an error message.
+	Logic:   Adds the user to our in-memory slice and adds an event to the queue of RabbitMQ to notify the search microservice.
+*/
 func CreateUser(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
 
+/*
+	UpdateUser
+	Returns: The updated user and a status code, or a status code and error message.
+	Logic:   Finds and updates a user, also notifies the competition microservice.
+*/
 func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
 
+/*
+	DeleteUser
+	Returns: A status code and a message.
+	Logic:   Deletes a user, also notifies the search microservice
+*/
 func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
