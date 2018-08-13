@@ -150,10 +150,10 @@ func CreateUser(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists"})
 			}
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Unable to validate your data"})
 		}
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Unable to validate your data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
 	}
 }
 
