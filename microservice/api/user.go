@@ -97,6 +97,9 @@ func filterUsers(parameters map[string][]string) []User {
 	Logic: If there are query parameters, a filter is added.
 	Considerations: Would be good to chunk out the slice of users to
 					somehow concurrently run over the chunks, increasing performance.
+					At the current stage of the application I can't see any reason to add any errors.
+					However, if there would be a layer of authentication, I would suggest adding errors to
+					handle unauthorized requests.
 */
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
@@ -111,11 +114,21 @@ func GetUsers(c *gin.Context) {
 	POST: CreateUser
 	Returns: The created user, or an error message.
 	Logic:   Adds the user to our in-memory slice and adds an event to the queue of RabbitMQ to notify the search microservice.
+			 If an entry in users exists with the nickname, then the request will fail.
+			 If the request has an erroneous user in it (ie, can't be parsed), it will return an internal server error.
 */
 func CreateUser(c *gin.Context) {
 	var user User
-	c.BindJSON(&user)
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
+	if err := c.BindJSON(&user); err != nil {
+		if _, ok := users[user.NickName]; !ok {
+			users[user.NickName] = user
+			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
+		} else if ok {
+			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists"})
+		}
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+	}
 }
 
 /*
