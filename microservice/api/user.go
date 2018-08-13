@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -28,11 +29,12 @@ var users = map[string]User{
 }
 
 func helpText() string {
-	return ("Firstname: string\n" +
-		"Lastname: string\n" +
-		"Nickname: string\n" +
-		"Email: string\n" +
-		"Password: string\n" +
+	return fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s",
+		"Firstname: string",
+		"Lastname: string",
+		"Nickname: string",
+		"Email: string",
+		"Password: string",
 		"Country: string")
 }
 func (u *User) validate() bool {
