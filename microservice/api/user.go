@@ -27,14 +27,6 @@ var users = map[string]User{
 	"h4xx0r": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
-func helpText() string {
-	return `Firstname: string 
-	Lastname: string
-	Nickname: string
-	Email: string
-	Password: string
-	Country: string`
-}
 func (u *User) validate() bool {
 	return u.FirstName != "" && u.LastName != "" && u.NickName != "" && u.Email != "" && u.Password != "" && u.Country != ""
 }
@@ -142,7 +134,7 @@ func CreateUser(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists, unable to add new user"})
 			}
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user. It should contain:\n" + helpText()})
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user."})
 		}
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
@@ -165,7 +157,7 @@ func UpdateUser(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "No user exists with that nickname, unable to update"})
 			}
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user. It should contain:\n" + helpText()})
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user."})
 		}
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
