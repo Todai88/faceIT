@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +35,13 @@ func getSlicedUsers() []User {
 	return slicedUsers
 }
 
+func compareEquals(expected, actual string) bool {
+	if strings.ToLower(expected) == strings.ToLower(actual) {
+		return true
+	}
+	return false
+}
+
 func filterUsers(parameters map[string][]string) []User {
 	var slicedUsers = []User{}
 	for index := range users {
@@ -49,29 +57,30 @@ func filterUsers(parameters map[string][]string) []User {
 			In this case we are really only interested in the first item in that list of strings.
 			If a user sends two or more country parameters, it can be considered to be an incorrect
 			usage of the API, in which case we discard any superflous values.
+			Further work on this could include a case-insensitive key in the dictionary.
 		*/
 		if nickname, ok := parameters["nickname"]; ok {
-			if users[index].NickName != nickname[0] {
+			if compareEquals(users[index].NickName, nickname[0]) {
 				fullFillsAllFilters = false
 			}
 		}
 		if country, ok := parameters["country"]; ok {
-			if users[index].Country != country[0] {
+			if compareEquals(users[index].Country, country[0]) {
 				fullFillsAllFilters = false
 			}
 		}
 		if firstname, ok := parameters["firstname"]; ok {
-			if users[index].FirstName != firstname[0] {
+			if compareEquals(users[index].FirstName, firstname[0]) {
 				fullFillsAllFilters = false
 			}
 		}
 		if lastname, ok := parameters["lastname"]; ok {
-			if users[index].LastName != lastname[0] {
+			if compareEquals(users[index].LastName, lastname[0]) {
 				fullFillsAllFilters = false
 			}
 		}
 		if email, ok := parameters["email"]; ok {
-			if users[index].Email != email[0] {
+			if compareEquals(users[index].Email, email[0]) {
 				fullFillsAllFilters = false
 			}
 		}
@@ -83,7 +92,7 @@ func filterUsers(parameters map[string][]string) []User {
 }
 
 /*
-	GetUsers
+	GET: GetUsers
 	Returns: Slice of users of length >= 0.
 	Logic: If there are query parameters, a filter is added.
 	Considerations: Would be good to chunk out the slice of users to
@@ -99,11 +108,14 @@ func GetUsers(c *gin.Context) {
 }
 
 /*
-	CreateUser
+	POST: CreateUser
 	Returns: The created user, or an error message.
 	Logic:   Adds the user to our in-memory slice and adds an event to the queue of RabbitMQ to notify the search microservice.
 */
 func CreateUser(c *gin.Context) {
+	var user User
+	c.BindJSON(&user)
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
 }
 
 /*
