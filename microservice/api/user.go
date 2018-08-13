@@ -27,26 +27,16 @@ var users = map[string]User{
 	"h4xx0r": User{FirstName: "John", LastName: "Doe", NickName: "h4xx0r", Email: "h4xx0r@SKgaming.com", Password: "ILoveGrubby4eva!", Country: "Netherlands"},
 }
 
+func helpText() string {
+	return ("Firstname: string\n" +
+		"Lastname: string\n" +
+		"Nickname: string\n" +
+		"Email: string\n" +
+		"Password: string\n" +
+		"Country: string")
+}
 func (u *User) validate() bool {
-	if u.FirstName == "" {
-		return false
-	}
-	if u.LastName == "" {
-		return false
-	}
-	if u.NickName == "" {
-		return false
-	}
-	if u.Email == "" {
-		return false
-	}
-	if u.Password == "" {
-		return false
-	}
-	if u.Country == "" {
-		return false
-	}
-	return true
+	return u.FirstName != "" && u.LastName != "" && u.NickName != "" && u.Email != "" && u.Password != "" && u.Country != ""
 }
 
 func getSlicedUsers() []User {
@@ -148,24 +138,38 @@ func CreateUser(c *gin.Context) {
 			if _, ok := users[user.NickName]; !ok {
 				users[user.NickName] = user
 				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
-			} else if ok {
-				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists"})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "A user with that nickname already exists, unable to add new user"})
 			}
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Unable to validate your data"})
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user. It should contain:\n" + helpText()})
 		}
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
 	}
 }
 
 /*
-	UpdateUser
+	PUT: UpdateUser
 	Returns: The updated user and a status code, or a status code and error message.
 	Logic:   Finds and updates a user, also notifies the competition microservice.
 */
 func UpdateUser(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
+	var user User
+	if err := c.BindJSON(&user); err == nil {
+		if user.validate() {
+			if _, ok := users[user.NickName]; ok {
+				users[user.NickName] = user
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "No user exists with that nickname, unable to update"})
+			}
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user. It should contain:\n" + helpText()})
+		}
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+	}
 }
 
 /*
