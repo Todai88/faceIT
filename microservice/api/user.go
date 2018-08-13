@@ -51,8 +51,10 @@ func (u *User) validate() bool {
 
 func getSlicedUsers() []User {
 	var slicedUsers = make([]User, len(users))
-	for index := range users {
-		slicedUsers = append(slicedUsers, users[index])
+	index := 0
+	for _, value := range users {
+		slicedUsers[index] = value
+		index++
 	}
 	return slicedUsers
 }
