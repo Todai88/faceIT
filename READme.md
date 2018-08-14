@@ -11,16 +11,16 @@ The user entity consists of
 - [x] country
 
 The service must allow to:
-- [x] add a new user (POST => /api/v1/users/)
-- [x] modify an existing user (PUT => /api/v1/users/:id)
-- [x] remove a user (DELETE => /api/v1/users/:id)
-- [x] return the list of the users satisfying certain criteria (e.g. for country) (GET => /api/v1/users/?query=value?query2=value2...)
+- [x] add a new user (`POST => /api/v1/users/`)
+- [x] modify an existing user (`PUT => /api/v1/users/:id`)
+- [x] remove a user (`DELETE => /api/v1/users/:id`)
+- [x] return the list of the users satisfying certain criteria (e.g. for country) (`GET => /api/v1/users/?query=value?query2=value2`...)
 
 The microservice will be part of a more complex architecture, so consider for example that
 the Search microservice will need to be notified when a new user is added, or that the
 Competition microservice will need to be notified when the user changes his nickname.
 
-//=> These above examples should be possible by using a event / messaging service such as kafka / rabbitMQ. However, this seemed as a bit superflous to be integrated for a programming test.
+`//=> These above examples should be possible by using a event / messaging service such as kafka / rabbitMQ. However, this seemed as a bit superflous to be integrated for a programming test.`
 
 Think at how to implement a system that is scalable.
 
@@ -36,9 +36,9 @@ calling the end points using http calls after starting the application.
 Please explain what are the criteria and assumptions you used to take decisions. A clear
 and correct explanation is part of the test.
 
-// => For the tests, check /microservice/api/user_test.go
+`// => For the tests, check /microservice/api/user_test.go`
 
-// => Documentation and reasoning is provided in the code.
+`// => Documentation and reasoning is provided in the code.`
 
 To run application:
 
