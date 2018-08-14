@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -84,23 +85,15 @@ func UpdateUser(c *gin.Context) {
 	Logic:   Deletes a user, also notifies the search microservice
 */
 func DeleteUser(c *gin.Context) {
-	if id := c.Param("id"); id == "0" {
+	var id int
+	if id, _ = strconv.Atoi(c.Param("id")); id == 0 {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "You didn't provide an id to update with."})
 		return
 	}
-	var user User
-	if err := c.BindJSON(&user); err == nil {
-		if user.validate() {
-			if doesUserExist(user.ID) {
-				delete(users, user.ID)
-				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
-			} else {
-				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": "No user exists with that ID, unable to proceed with delete."})
-			}
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "The body of your request can not be parsed into a user."})
-		}
+	if doesUserExist(id) {
+		delete(users, id)
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": getSlicedUsers()})
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusBadRequest, "data": "Something went wrong with your request. Contact support@faceit.com for more information."})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusInternalServerError, "data": "No user exists with that ID, unable to proceed with delete."})
 	}
 }
