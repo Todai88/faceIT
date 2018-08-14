@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  go-micro-server:
+      build:
+        context: .
+        dockerfile: microservice/dockerfile
+      image: go-micro-server:1.0.0
+      environment:
+      - logFile=log.txt
+      ports:
+      - "5050:5050"
