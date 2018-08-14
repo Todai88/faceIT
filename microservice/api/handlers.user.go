@@ -17,7 +17,6 @@ import (
 					However, if there would be a layer of authentication, I would suggest adding errors to
 					handle unauthorized requests.
 */
-
 func GetUsers(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	if len(queryParams) >= 0 {
