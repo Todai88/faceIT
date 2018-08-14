@@ -40,10 +40,12 @@ and correct explanation is part of the test.
 
 `// => Documentation and reasoning is provided in the code.`
 
-To run application:
+# To run application:
 
-Either clone repo and run the above mentioned go get command, then run the microservice/main.go
+Either:
 
-Or run docker-compose up in the root of the folder. This should create a container with 5050:5050 exposed and available for testing of its endpoints.
+* Clone repo and run the above mentioned go get command, then run the microservice/main.go
 
-The endpoints are self-explanatory and available using localhost:5050/api/v1/users + correct verb + http request body / query params.
+* Or run `docker-compose up` in the root of the cloned folder. This should create a container with 5050:5050 exposed and available for testing of its endpoints.
+
+The endpoints are self-explanatory and available using `localhost:5050/api/v1/users/` + correct verb + http request body / query params.
