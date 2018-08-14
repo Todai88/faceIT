@@ -35,8 +35,8 @@ func startServer() {
 	{
 		v1.GET("/users/", api.GetUsers)
 		v1.POST("/users/", api.CreateUser)
-		v1.PUT("/users/:nickname", api.UpdateUser)
-		v1.DELETE("/users/:nickname", api.DeleteUser)
+		v1.PUT("/users/:id", api.UpdateUser)
+		v1.DELETE("/users/:id", api.DeleteUser)
 	}
 
 	router.Run(":5050")
